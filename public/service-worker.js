@@ -6,7 +6,8 @@ const FILES_TO_CACHE = [
   '/webpack.config.js',
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png',
-  '/manifest.json'
+  '/manifest.json',
+  '/indexDB.js'
 ];
 
 const STATIC_CACHE = "static-cache-v1";
