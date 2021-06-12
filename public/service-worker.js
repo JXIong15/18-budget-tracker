@@ -3,7 +3,6 @@ const FILES_TO_CACHE = [
   '/index.html',
   '/index.js',
   '/styles.css',
-  '/webpack.config.js',
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png',
   '/manifest.json',
@@ -56,7 +55,7 @@ self.addEventListener("fetch", event => {
   }
 
   // handle runtime GET requests for data from /api routes
-  if (event.request.url.includes("/api/images")) {
+  if (event.request.url.includes("/api/transaction")) {
     // make network request and fallback to cache if network request fails (offline)
     event.respondWith(
       caches.open(RUNTIME_CACHE).then(cache => {

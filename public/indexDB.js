@@ -1,55 +1,56 @@
-export function checkForIndexedDb() {
-    if (!window.indexedDB) {
-      console.log("Your browser doesn't support a stable version of IndexedDB.");
-      return false;
-    }
-    return true;
-  }
-  
-  export function useIndexedDb(budgetDB, pending, method, object) {
-    return new Promise((resolve, reject) => {
-      const request = window.indexedDB.open(budgetDB, 1);
-      let db,
-        tx,
-        store;
-  
-      request.onupgradeneeded = function(e) {
-        const db = request.result;
-        db.createObjectStore(pending, { keyPath: "_id" });
-      };
-  
-      request.onerror = function(e) {
-        console.log("There was an error");
-      };
-  
-      request.onsuccess = function(e) {
-        db = request.result;
-        tx = db.transaction(pending, "readwrite");
-        store = tx.objectStore(pending);
-  
-        db.onerror = function(e) {
-          console.log("error");
-        };
-        if (method === "put") {
-          store.put(object);
-        } else if (method === "get") {
-          const all = store.getAll();
-          all.onsuccess = function() {
-            resolve(all.result);
-          };
-        } else if (method === "delete") {
-          store.delete(object._id);
+const request = indexedDB.open("budgetDB", 1);
+let db;
+
+request.onupgradeneeded = function (e) {
+    const db = request.result;
+    db.createObjectStore("pending", { autoIncrement: true });
+};
+
+request.onerror = function (e) {
+    console.log("There was an error");
+};
+
+request.onsuccess = function (e) {
+    db = request.result;
+    db.onerror = function (e) {
+        console.log("error");
+    };
+    checkDB(db);
+}
+
+function checkDB(db) {
+    const tx = db.transaction(["pending"], "readwrite");
+    const store = tx.objectStore("pending");
+    const all = store.getAll();
+
+    all.onsuccess = function () {
+        if (all.result.length > 0) {
+            fetch("/api/transaction/bulk", {
+                method: "POST",
+                body: JSON.stringify(all.result),
+                headers: {
+                    Accept: "application/json, text/plain, */*",
+                    "Content-Type": "application/json"
+                }
+            })
+                .then(response => {
+                    return response.json();
+                })
+                .then(() => {
+                    const tx = db.transaction(["pending"], "readwrite");
+                    const store = tx.objectStore("pending");
+                    store.clear();
+                })
         }
-        tx.oncomplete = function() {
-          db.close();
-        };
-      };
+    }
+}
 
-    // index.js functions
-      function saveRecord(record) {
-        store.add(record);
-      }
 
-    });
-  }
-  
+// index.js function to save a new record
+function saveRecord(record) {
+    const tx = db.transaction(["pending"], "readwrite");
+    const store = tx.objectStore("pending");
+    console.log(store);
+    console.log(record);
+    store.add(record);
+}
