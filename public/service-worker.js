@@ -1,10 +1,11 @@
 const FILES_TO_CACHE = [
     '/index.html',
     '/index.js',
-    '/style.css',
+    '/styles.css',
     '/webpack.config.js',
     '/icons/icon-192x192.png',
-    '/icons/icon_512x512.png'
+    '/icons/icon-512x512.png',
+    '/manifest.json'
   ];
   
   const STATIC_CACHE = "static-cache-v1";
