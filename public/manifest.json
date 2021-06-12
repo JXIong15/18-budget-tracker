@@ -1,0 +1,9 @@
+{
+    "name": "Budget Tracker App app",
+    "short_name": "Budget Tracker",
+    "display": "standalone",
+    "start_url": "/",
+    "description": "An application that allows you track your budget online and offline.",
+    "background_color": "#ffffff",
+    "theme_color": "#ffffff"
+}
